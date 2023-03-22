@@ -1,0 +1,23 @@
+<div class="container table-responsive">          
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="task-id">recipe_ID</th>
+            <th class="status">recipe_title</th>
+            <th class="task">calories</th>
+           
+            
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for item in items %}
+            <tr>
+              <td>{{item.recipe_ID}}</td>
+              <td>{{item.recipe_title}}</td>
+              <td>{{item.calories}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>

@@ -1,0 +1,22 @@
+<div class="container table-responsive">          
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="task-id">category</th>
+            <th class="status">num_noncheese</th>
+
+           
+            
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for item in items %}
+            <tr>
+              <td>{{item.category}}</td>
+              <td>{{item.num_noncheese}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>

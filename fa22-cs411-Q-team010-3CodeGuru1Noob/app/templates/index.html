@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+
+        <title>Demo</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" href="{{ url_for('static', filename='img/cs.ico') }}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" 
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/custom.css') }}">
+
+    </head>
+
+
+
+    <body>
+
+    <main role="main" class="container extra-bottom">
+      <h1 class="mt-5">Demo app</h1>
+
+    </main>
+    
+
+    <div class="container">    
+
+<!-- Button trigger modal -->
+<div style="text-align: right;">
+    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#task-modal" data-source="New Task">Add Recipe</button>
+    </div>
+
+
+
+    <div class="modal fade" id="task-modal" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="Label">Add a recipe</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="task-form-display">recipe</span>
+                <input id="submit-title" type="text" class="form-control" placeholder="insert recipe title" aria-label="task-name" aria-describedby="basic-addon1">
+                <input id="submit-cookmin" type="text" class="form-control" placeholder="insert cook time" aria-label="task-name" aria-describedby="basic-addon1">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="submit-task" type="button" class="btn btn-primary">insert</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+</div>
+
+
+    <!--Todo Table-->
+    <div class="container table-responsive">          
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="task-id">#</th>
+            <th class="task">title</th>
+            <th class="task">cook_min</th>
+<!--            <th class="update">changepassword</th>-->
+            <th class="update">Remove</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{item.recipe_id}}</td>
+                <td>{{item.title}}</td>
+
+                <td>{{item.cook_min}}</td>
+
+<!--                <td><button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#task-modal" data-source="{{item.account_id}}" data-content="{{item.password}}"><i class="fa fa-pen fa-1" aria-hidden="true"></i></button></td>-->
+
+                <td><button class="btn btn-outline-secondary btn-sm remove" data-source="{{item.recipe_id}}" type="button"><i class="fa fa-trash fa-1" aria-hidden="true"></i></button></td>
+            </tr>
+        {% endfor %}
+        
+        </tbody>
+    </table>
+    </div>
+
+    <input type="text" placeholder="Recipe ID" id="updated_ID">
+    <input type="text" placeholder="New Title" id="updated_password">
+        <button type="button" onclick="getInputValue();">Update</button>
+    
+        <script>
+            function getInputValue(){
+                var id = document.getElementById("updated_ID").value;
+                var pwd = document.getElementById("updated_password").value;
+                        var t = {
+      "recipe_id":id,
+      "title":pwd
+      }
+                 $.ajax({
+                                type: 'POST',
+                                url: '/editUser',
+                                data: JSON.stringify(t),
+                                dataType:"json",
+                                contentType:"application/json",
+                                // url:  '/delete/20',
+                                success: function (res) {
+                                    console.log(res.response)
+                                    location.reload();
+                                },
+                                error: function () {
+                                    console.log('Error');
+                                }
+                            });
+    
+            }
+        </script>
+
+
+            <!-- search button -->
+            <div style="text-align: right;">
+                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#recipe-modal" data-source="Search Recipe">search recipe</button>
+                </div>
+        
+                <div class="modal fade" id="recipe-modal" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="Label">search recipe by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+        
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text" id="recipe-form-display">keyword</span>
+                          <input id="keyword" type="text" class="form-control" placeholder="keyword" aria-label="recipe-name" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button onclick=locationreload() id="submit-recipe" type="button" class="btn btn-primary">search</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                        <!-- adv1 button -->
+        <button onclick="adv1Function()">adv1</button>
+        <p id="adv1">show receipe calories less than 500</p>
+        <script>
+        function adv1Function() {
+        $.ajax({
+            type: 'POST',
+            url: '/adv1',
+            success: function (res) {
+                console.log(res.response);
+                $("html").html(res);
+            },
+            error: function () {
+                console.log('Error');
+            }
+        });
+         }
+         </script>
+
+                 <!-- adv2 button -->
+
+        <button onclick="adv2Function()">adv2</button>
+        <p id="adv2">show catogories do not contain cheese and its number of receipes </p>
+        <script>
+        function adv2Function() {
+        $.ajax({
+            type: 'POST',
+            url: '/adv2',
+            success: function (res) {
+                console.log(res.response);
+                $("html").html(res);
+            },
+            error: function () {
+                console.log('Error');
+            }
+        });
+         }
+         </script>
+
+
+
+
+                 <!-- hardlv button -->
+
+        <button onclick="hardlvFunction()">hardlv</button>
+        <p id="hardlv">show receipe hardlv</p>
+        <script>
+        function hardlvFunction() {
+        $.ajax({
+            type: 'POST',
+            url: '/hardlv',
+            success: function (res) {
+                console.log(res.response);
+                $("html").html(res);
+            },
+            error: function () {
+                console.log('Error');
+            }
+        });
+        }
+        </script>
+
+        <!-- callv button -->
+
+        <button onclick="callvFunction()">callv</button>
+        <p id="hardlv">show receipe callv</p>
+        <script>
+        function callvFunction() {
+        $.ajax({
+            type: 'POST',
+            url: '/callv',
+            success: function (res) {
+                console.log(res.response);
+                $("html").html(res);
+            },
+            error: function () {
+                console.log('Error');
+            }
+        });
+        }
+        </script>
+
+
+
+<button onclick="trigger_create_function()">enable trigger</button>
+        <p id="trigger_create">Create a trigger to filter recipe whose cook time is less than 20 minutes</p >
+        <script>
+        function trigger_create_function() {
+        $.ajax({
+            type: 'POST',
+            url: '/trigger_enable',
+            success: function (res) {
+                console.log(res.response);
+                    alert(res)
+
+
+            },
+            error: function () {
+                console.log('Error');
+
+            }
+        });
+         }
+         </script>
+
+        <button onclick="trigger_delete_function()">disable trigger</button>
+        <p id="trigger_delete">delete the trigger</p >
+        <script>
+        function trigger_delete_function() {
+        $.ajax({
+            type: 'POST',
+            url: '/trigger_disable',
+            success: function (res) {
+                console.log(res.response);
+                alert(res)
+
+            },
+            error: function () {
+                console.log('Error');
+
+            }
+        });
+         }
+         </script>
+
+        <button onclick="trigger_show_function()">easy recipe</button>
+        <p id="trigger_show">Show the list filtered by trigger</p >
+        <script>
+        function trigger_show_function() {
+        $.ajax({
+            type: 'POST',
+            url: '/trigger',
+            success: function (res) {
+                console.log(res.response);
+                $("html").html(res);
+            },
+            error: function () {
+                console.log('Error');
+            }
+        });
+         }
+         </script>
+
+
+
+
+    <footer class="footer">
+      <div class="container">
+            <p class="text-muted"><small>App developed for CS411 UIUC by @tcheng10</small></p>
+      </div>
+    </footer>
+
+
+
+  </body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='script/modal.js') }}"></script>
+
+</html>
